@@ -17,6 +17,10 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { FilterModal } from './components/filter-modal';
+import { VehicleBody } from 'utils/types';
+
+import { useEffect, useState } from 'react';
+import CardStatSkeleton from './components/skeleton/card-stat-skeleton';
 
 const invoices = [
   {
@@ -77,7 +81,7 @@ const getVehicles = async () => {
 };
 
 function App() {
-  const { data, isError } = useQuery({
+  const { data, isError, isLoading } = useQuery({
     queryKey: ['vehicles'],
     queryFn: getVehicles,
   });
@@ -85,6 +89,36 @@ function App() {
   if (isError) {
     return <div>error</div>;
   }
+
+  const [approvalCounts, setApprovalCounts] = useState({
+    draft: 0,
+    approved: 0,
+    pending: 0,
+    rejected: 0,
+  });
+
+  const [isCounting, setIsCounting] = useState(true);
+
+  useEffect(() => {
+    if (data?.data?.result) {
+      const counts = { draft: 0, approved: 0, pending: 0, rejected: 0 };
+
+      data.data.result.forEach((v: VehicleBody) => {
+        if (v.approval_status === 'Draft') counts.draft++;
+        else if (v.approval_status === 'Approved') counts.approved++;
+        else if (v.approval_status === 'Pending') counts.pending++;
+        else if (v.approval_status === 'Rejected') counts.rejected++;
+      });
+
+      setApprovalCounts(counts);
+      setIsCounting(false); // Counting is complete
+    }
+  }, [data]);
+
+  if (isLoading || isCounting) {
+    return <CardStatSkeleton />;
+  }
+
   return (
     <div className="p-8 min-h-screen">
       <h2 className="text-3xl font-bold tracking-tight">Vehicle Dashboard</h2>
@@ -97,7 +131,9 @@ function App() {
               <PencilLine className="text-neutral-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">19</div>
+              <div className="text-3xl font-bold text-gray-500">
+                {approvalCounts?.draft}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -108,7 +144,9 @@ function App() {
               <ListTodo className=" text-neutral-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">7</div>
+              <div className="text-3xl font-bold text-blue-500">
+                {approvalCounts?.pending}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -117,7 +155,9 @@ function App() {
               <Ban className=" text-neutral-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">28</div>
+              <div className="text-3xl font-bold text-red-500">
+                {approvalCounts?.rejected}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -126,10 +166,13 @@ function App() {
               <LaptopMinimalCheck className=" text-neutral-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">4</div>
+              <div className="text-3xl font-bold text-green-500">
+                {approvalCounts?.approved}
+              </div>
             </CardContent>
           </Card>
         </div>
+
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <Input type="text" placeholder="Search" className=" max-w-lg" />

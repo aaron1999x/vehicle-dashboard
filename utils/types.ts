@@ -23,3 +23,16 @@ export interface VehicleRequest {
   pagination_info: Pagination;
   sort_by: SortBy[];
 }
+
+export interface VehicleBody {
+  vehicle_type: string; // Van, Car, Bus, etc.
+  passenger_capacity_min: number;
+  passenger_capacity_max: number;
+  approval_status: string;
+  vehicle_status: string;
+  mtime_from: number; // Unix timestamp
+  mtime_to: number; // Unix timestamp
+  license_plate: string;
+  pagination_info: Pagination;
+  sort_by: SortBy[];
+}

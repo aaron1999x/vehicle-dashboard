@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ApprovalStatus, VehicleStatus } from 'utils/types';
+import { Filter } from 'lucide-react';
 
 // Create mappings for display values
 const approvalStatusMap = {
@@ -64,27 +65,34 @@ export function FilterModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Open Filters</Button>
+        <Button variant="outline">
+          <Filter /> Filters
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Filter Options</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="vehicleType" className="text-right">
+          <div className="flex flex-col items-start gap-1">
+            <label
+              htmlFor="vehicleType"
+              className="font-medium text-sm text-gray-700"
+            >
               Vehicle Type
             </label>
             <Input
               id="vehicleType"
-              className="col-span-3"
               placeholder="Enter vehicle type"
               value={vehicleType}
               onChange={(e) => setVehicleType(e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="approvalStatus" className="text-right">
+          <div className="flex flex-col items-start gap-1">
+            <label
+              htmlFor="approvalStatus"
+              className="font-medium text-sm text-gray-700"
+            >
               Approval Status
             </label>
             <Select
@@ -93,7 +101,7 @@ export function FilterModal() {
                 setApprovalStatus(Number.parseInt(value) as ApprovalStatus)
               }
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger>
                 <SelectValue placeholder="Select approval status">
                   {approvalStatus !== ''
                     ? approvalStatusMap[approvalStatus]
@@ -109,8 +117,11 @@ export function FilterModal() {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="vehicleStatus" className="text-right">
+          <div className="flex flex-col items-start gap-1">
+            <label
+              htmlFor="vehicleStatus"
+              className="font-medium text-sm text-gray-700"
+            >
               Vehicle Status
             </label>
             <Select
@@ -119,7 +130,7 @@ export function FilterModal() {
                 setVehicleStatus(Number.parseInt(value) as VehicleStatus)
               }
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger>
                 <SelectValue placeholder="Select vehicle status">
                   {vehicleStatus !== ''
                     ? vehicleStatusMap[vehicleStatus]
@@ -135,11 +146,14 @@ export function FilterModal() {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="passengerCapacity" className="text-right">
+          <div className="flex flex-col items-start gap-1">
+            <label
+              htmlFor="passengerCapacity"
+              className="font-medium text-sm text-gray-700"
+            >
               Passenger Capacity
             </label>
-            <div className="col-span-3 grid grid-cols-2 gap-2">
+            <div className=" grid grid-cols-2 gap-2">
               <Input
                 type="number"
                 id="minCapacity"
