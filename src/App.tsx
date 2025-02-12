@@ -1,43 +1,60 @@
-import { Ban, ListTodo, PencilLine } from 'lucide-react';
 import './App.css';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Input } from './components/ui/input';
+
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { FilterModal } from './components/filter-modal';
+
+import VehicleStatContainer from './container/vehicle-stat-container';
+import { DataTable } from './components/table/data-table';
+import { columns } from './components/table/columns';
+
+// const getVehicles = async () => {
+//   const response = await fetch(
+//     'http://ia.tnx1.xyz/api/v1/ia/vehicle/get_all_vehicles'
+//   );
+//   return await response.json();
+// };
+const getVehicles = async () => {
+  const response = await axios.post(
+    'http://ia.tnx1.xyz/api/v1/ia/vehicle/get_all_vehicles'
+  );
+  return await response.data;
+};
 
 function App() {
+  const { data, isError, isLoading } = useQuery({
+    queryKey: ['vehicles'],
+    queryFn: getVehicles,
+  });
+
+  if (isError) {
+    return <div>error</div>;
+  }
+
+  if (isLoading) {
+    return <div>load</div>;
+  }
+
+  const vehicles = data?.data?.result ?? [];
+
   return (
     <div className="p-8 min-h-screen">
       <h2 className="text-3xl font-bold tracking-tight">Vehicle Dashboard</h2>
 
-      <div className="mt-10">
-        <div className="grid gap-8 lg:grid-cols-3 md:grid-cols-2">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-md font-medium">Draft</CardTitle>
-              <PencilLine className="text-neutral-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">19</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-md font-medium">
-                Pending Information
-              </CardTitle>
-              <ListTodo className=" text-neutral-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">7</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-md font-medium">Rejected</CardTitle>
-              <Ban className=" text-neutral-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">28</div>
-            </CardContent>
-          </Card>
+      <div className="mt-10 flex flex-col space-y-8">
+        <VehicleStatContainer />
+
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <Input type="text" placeholder="Search" className=" max-w-lg" />
+            <FilterModal />
+          </div>
+
+          <div>
+            <DataTable columns={columns} data={vehicles} />
+          </div>
         </div>
       </div>
     </div>

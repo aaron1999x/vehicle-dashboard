@@ -1,8 +1,44 @@
-# Project Overview: Build a Vehicle Management Dashboard!
+# Project Setup Guide
 
-This take-home challenge is all about showing off your frontend skills, design
-creativity, and technical abilities! You’ll be creating a Vehicle Management
-Dashboard based on the provided wireframes. But don’t worry—you don’t have to
-stick to them exactly. Feel free to flex your creative muscles and improve the design!
-We’d love for you to use React, TypeScript, and Tailwind CSS while integrating a
-UI library of your choice (Ant Design, Material-UI, Bootstrap—your call!).
+## Prerequisites
+
+Ensure you have the following installed before proceeding:
+
+- [Node.js](https://nodejs.org/) (Latest LTS recommended)
+- [pnpm](https://pnpm.io/) (Package manager)
+
+  Install pnpm globally if you haven't:
+
+  ```sh
+  npm install -g pnpm
+  ```
+
+## Getting Started
+
+1. **Clone the repository**
+
+   ```sh
+   git clone <repository-url>
+   cd <project-folder>
+   ```
+
+2. **Install dependencies**
+
+   ```sh
+   pnpm install
+   ```
+
+3. **Start the development server**
+   ```sh
+   pnpm dev
+   ```
+   This will start Vite and serve the application locally.
+
+## Technologies used
+
+- React (with Vite for fast development)
+- Tailwind CSS (for styling)
+- shadcn/ui (for UI components)
+- Lucide React (for icons)
+- TanStack Query (for data fetching and state management)
+- pnpm (for package management)
