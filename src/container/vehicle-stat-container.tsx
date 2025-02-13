@@ -1,51 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { getVehicles } from '../../utils/serviceCalls/vehicles';
+import { getVehiclesHighlight } from '../../utils/serviceCalls/vehicles';
 import CardStatSkeleton from '@/components/skeleton/card-stat-skeleton';
-import { VehicleResponse } from 'utils/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ban, LaptopMinimalCheck, ListTodo, PencilLine } from 'lucide-react';
+import { Ban, ListTodo, PencilLine } from 'lucide-react';
+import { ErrorDisplay } from '@/components/error-display';
 function VehicleStatContainer() {
-  const [approvalCounts, setApprovalCounts] = useState({
-    draft: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
-  });
-
-  const [isCounting, setIsCounting] = useState(true);
-
   const { data, isError, isLoading } = useQuery({
     queryKey: ['vehicles'],
-    queryFn: getVehicles,
+    queryFn: getVehiclesHighlight,
   });
 
-  useEffect(() => {
-    if (data?.data?.result) {
-      const counts = { draft: 0, approved: 0, pending: 0, rejected: 0 };
-
-      data.data.result.forEach((v: VehicleResponse) => {
-        if (v.approval_status === 'Draft') counts.draft++;
-        else if (v.approval_status === 'Approved') counts.approved++;
-        else if (v.approval_status === 'Pending') counts.pending++;
-        else if (v.approval_status === 'Rejected') counts.rejected++;
-      });
-
-      setApprovalCounts(counts);
-      setIsCounting(false); // Counting is complete
-    }
-  }, [data]);
-
   if (isError) {
-    return <div>error</div>;
+    return <ErrorDisplay />;
   }
 
-  if (isLoading || isCounting) {
+  if (isLoading) {
     return <CardStatSkeleton />;
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-md font-medium">Draft</CardTitle>
@@ -53,7 +27,7 @@ function VehicleStatContainer() {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-gray-500">
-            {approvalCounts?.draft}
+            {data.data?.total_draft}
           </div>
         </CardContent>
       </Card>
@@ -66,7 +40,7 @@ function VehicleStatContainer() {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-blue-500">
-            {approvalCounts?.pending}
+            {data.data?.total_pending}
           </div>
         </CardContent>
       </Card>
@@ -77,18 +51,7 @@ function VehicleStatContainer() {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-red-500">
-            {approvalCounts?.rejected}
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-md font-medium">Approved</CardTitle>
-          <LaptopMinimalCheck className=" text-neutral-400" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold text-green-500">
-            {approvalCounts?.approved}
+            {data.data?.total_rejected}
           </div>
         </CardContent>
       </Card>

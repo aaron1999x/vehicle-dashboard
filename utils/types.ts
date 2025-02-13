@@ -1,6 +1,6 @@
 export type ApprovalStatus = 0 | 1 | 2 | 3; // 0 = Draft, 1 = Approved, 2 = Pending, 3 =
 export type VehicleStatus = 0 | 1 | 2; // 0 = Active, 1 = Inactive, 2 = Decommissioned
-
+export type VehicleType = 'Truck' | 'Bus' | 'Van' | 'Taxi';
 export type StatusType = 'Draft' | 'Pending' | 'Rejected' | 'Approved';
 
 export type Pagination = {
