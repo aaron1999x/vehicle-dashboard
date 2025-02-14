@@ -1,60 +1,52 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { getVehicles } from '../../utils/serviceCalls/vehicles';
+import { getVehiclesHighlight } from '../../utils/serviceCalls/vehicles';
 import CardStatSkeleton from '@/components/skeleton/card-stat-skeleton';
-import { VehicleResponse } from 'utils/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ban, LaptopMinimalCheck, ListTodo, PencilLine } from 'lucide-react';
+import { ArrowDownWideNarrow, Ban, ListTodo, PencilLine } from 'lucide-react';
+import { ErrorDisplay } from '@/components/error-display';
+import { Button } from '@/components/ui/button';
+import type { ApprovalStatus } from '../../utils/types';
+import { useFilterStore } from '@/lib/store/filterStore';
+
 function VehicleStatContainer() {
-  const [approvalCounts, setApprovalCounts] = useState({
-    draft: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
-  });
-
-  const [isCounting, setIsCounting] = useState(true);
-
   const { data, isError, isLoading } = useQuery({
     queryKey: ['vehicles'],
-    queryFn: getVehicles,
+    queryFn: getVehiclesHighlight,
   });
 
-  useEffect(() => {
-    if (data?.data?.result) {
-      const counts = { draft: 0, approved: 0, pending: 0, rejected: 0 };
-
-      data.data.result.forEach((v: VehicleResponse) => {
-        if (v.approval_status === 'Draft') counts.draft++;
-        else if (v.approval_status === 'Approved') counts.approved++;
-        else if (v.approval_status === 'Pending') counts.pending++;
-        else if (v.approval_status === 'Rejected') counts.rejected++;
-      });
-
-      setApprovalCounts(counts);
-      setIsCounting(false); // Counting is complete
-    }
-  }, [data]);
+  const setFilter = useFilterStore((state) => state.setFilter);
 
   if (isError) {
-    return <div>error</div>;
+    return <ErrorDisplay />;
   }
 
-  if (isLoading || isCounting) {
+  if (isLoading) {
     return <CardStatSkeleton />;
   }
 
+  const handleQuickFilter = (status: ApprovalStatus) => {
+    setFilter('approval_status', status);
+  };
+
   return (
-    <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-md font-medium">Draft</CardTitle>
           <PencilLine className="text-neutral-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-gray-500">
-            {approvalCounts?.draft}
+          <div className="text-4xl font-bold text-gray-500">
+            {data.data?.total_draft}
           </div>
+          <Button
+            variant="link"
+            onClick={() => handleQuickFilter(0)}
+            className=" flex items-center mt-2 p-0 text-gray-400 hover:text-gray-950 transition-colors"
+          >
+            View
+            <ArrowDownWideNarrow />
+          </Button>
         </CardContent>
       </Card>
       <Card>
@@ -65,9 +57,17 @@ function VehicleStatContainer() {
           <ListTodo className=" text-neutral-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-blue-500">
-            {approvalCounts?.pending}
+          <div className="text-4xl font-bold text-blue-500">
+            {data.data?.total_pending}
           </div>
+          <Button
+            variant="link"
+            onClick={() => handleQuickFilter(2)}
+            className=" flex items-center mt-2 p-0 text-gray-400 hover:text-gray-950 transition-colors"
+          >
+            View
+            <ArrowDownWideNarrow />
+          </Button>
         </CardContent>
       </Card>
       <Card>
@@ -76,20 +76,17 @@ function VehicleStatContainer() {
           <Ban className=" text-neutral-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-red-500">
-            {approvalCounts?.rejected}
+          <div className="text-4xl font-bold text-red-500">
+            {data.data?.total_rejected}
           </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-md font-medium">Approved</CardTitle>
-          <LaptopMinimalCheck className=" text-neutral-400" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold text-green-500">
-            {approvalCounts?.approved}
-          </div>
+          <Button
+            variant="link"
+            onClick={() => handleQuickFilter(3)}
+            className=" flex items-center mt-2 p-0 text-gray-400 hover:text-gray-950 transition-colors"
+          >
+            View
+            <ArrowDownWideNarrow />
+          </Button>
         </CardContent>
       </Card>
     </div>
