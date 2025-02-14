@@ -18,6 +18,12 @@ export type Trip = {
   to: string;
 };
 
+export interface PaginationInfo {
+  limit: number;
+  page: number;
+  total_records: number;
+}
+
 export interface VehicleRequest {
   vehicle_type: string; // Van, Car, Bus, etc.
   passenger_capacity_min: number;

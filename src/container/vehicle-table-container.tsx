@@ -10,6 +10,7 @@ import { ErrorDisplay } from '@/components/error-display';
 
 import type React from 'react';
 import { useFilterStore } from '@/lib/store/filterStore';
+import { Pagination } from '@/components/pagination';
 
 function VehicleTableContainer() {
   const { filters, setFilter } = useFilterStore();
@@ -44,7 +45,12 @@ function VehicleTableContainer() {
       {isLoading ? (
         <TableSkeleton />
       ) : (
-        <DataTable columns={columns} data={data?.data?.result || []} />
+        <>
+          <DataTable columns={columns} data={data?.data?.result || []} />
+          {data?.data?.pagination_info && (
+            <Pagination paginationInfo={data.data.pagination_info} />
+          )}
+        </>
       )}
     </div>
   );
