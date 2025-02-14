@@ -43,6 +43,7 @@ Ensure you have the following installed before proceeding:
 - TanStack Query (for asynchronous state management)
 - pnpm (for package management)
 - Zustand (for state management)
+- TypeScript
 
 ## Main Features Implemented
 
