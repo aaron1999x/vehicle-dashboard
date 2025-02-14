@@ -17,7 +17,12 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import type { ApprovalStatus, VehicleStatus, VehicleType } from 'utils/types';
+import type {
+  ApprovalStatus,
+  VehicleRequest,
+  VehicleStatus,
+  VehicleType,
+} from 'utils/types';
 import { Filter, XCircleIcon } from 'lucide-react';
 import { useFilterStore } from '@/lib/store/filterStore';
 
@@ -66,14 +71,29 @@ export function FilterModal() {
     (value) => value !== undefined
   );
 
-  const clearFilters = () => {
+  const clearModalFilters = () => {
+    setVehicleType('');
+    setApprovalStatus('');
+    setVehicleStatus('');
+    setMinCapacity('');
+    setMaxCapacity('');
+
+    // Clear all filters except mtime_from and mtime_to as they are not present in modal
+    Object.keys(filters).forEach((key) => {
+      if (key !== 'mtime_from' && key !== 'mtime_to') {
+        setFilter(key as keyof VehicleRequest, undefined);
+      }
+    });
+
+    setIsOpen(false);
+  };
+  const clearAllFilters = () => {
     setVehicleType('');
     setApprovalStatus('');
     setVehicleStatus('');
     setMinCapacity('');
     setMaxCapacity('');
     resetFilters();
-    setIsOpen(false);
   };
 
   const submitFilters = () => {
@@ -208,7 +228,7 @@ export function FilterModal() {
             </div>
           </div>
           <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={clearFilters}>
+            <Button variant="outline" onClick={clearModalFilters}>
               Clear Filters
             </Button>
             <Button onClick={submitFilters}>Submit</Button>
@@ -219,7 +239,7 @@ export function FilterModal() {
       {isFilterActive && (
         <Button
           variant="ghost"
-          onClick={clearFilters}
+          onClick={clearAllFilters}
           className="group flex items-center gap-2"
         >
           <XCircleIcon className="w-5 h-5 text-gray-500 group-hover:text-red-500" />

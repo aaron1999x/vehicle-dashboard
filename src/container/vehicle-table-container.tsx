@@ -11,14 +11,21 @@ import { ErrorDisplay } from '@/components/error-display';
 import type React from 'react';
 import { useFilterStore } from '@/lib/store/filterStore';
 import { Pagination } from '@/components/pagination';
+import { useEffect } from 'react';
 
 function VehicleTableContainer() {
-  const { filters, setFilter } = useFilterStore();
+  const { filters, pagination, setFilter } = useFilterStore();
 
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ['vehicles', filters],
-    queryFn: () => getVehiclesWithFilters(filters),
+  const { data, isError, isLoading, refetch } = useQuery({
+    queryKey: ['vehicles', filters, pagination],
+    queryFn: () =>
+      getVehiclesWithFilters({ ...filters, pagination_info: pagination }), //seperate pagination out of filters
   });
+
+  useEffect(() => {
+    //refetch when the pagination changes
+    refetch();
+  }, [refetch]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;

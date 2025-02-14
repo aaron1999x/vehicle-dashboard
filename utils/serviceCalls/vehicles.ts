@@ -12,17 +12,13 @@ export const getVehiclesWithFilters = async (
 ) => {
   const hasFilters = Object.keys(filters).length > 0;
 
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/get_all_vehicles`,
-      hasFilters ? filters : undefined,
-      { headers }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching vehicles:', error);
-    throw error;
-  }
+  const response = await axios.post(
+    `${BASE_URL}/get_all_vehicles`,
+    hasFilters ? filters : undefined,
+    { headers }
+  );
+
+  return response.data;
 };
 
 export const getVehiclesHighlight = async () => {

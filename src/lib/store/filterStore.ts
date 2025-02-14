@@ -3,6 +3,10 @@ import { create } from 'zustand';
 
 interface FilterState {
   filters: Partial<VehicleRequest>;
+  pagination: {
+    page: number;
+    limit: number;
+  };
   setFilter: (key: keyof VehicleRequest, value: any) => void;
   setPagination: (page: number, limit: number) => void;
   resetFilters: () => void;
@@ -10,30 +14,26 @@ interface FilterState {
 
 export const useFilterStore = create<FilterState>((set) => ({
   //creating a store simplifies the fact that i dont have to keep passing props in and out of parent/child
-  filters: {
-    pagination_info: {
-      page: 1,
-      limit: 10,
-    },
+  filters: {},
+  pagination: {
+    page: 1,
+    limit: 10,
   },
   setFilter: (key, value) =>
     set((state) => ({
       filters: { ...state.filters, [key]: value },
+      pagination: { ...state.pagination, page: 1 }, // Reset page to 1 when filter changes
     })),
   setPagination: (page, limit) =>
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        pagination_info: { page, limit },
+    set(() => {
+      return { pagination: { page, limit } };
+    }),
+  resetFilters: () =>
+    set(() => ({
+      filters: {},
+      pagination: {
+        page: 1,
+        limit: 10,
       },
     })),
-  resetFilters: () =>
-    set({
-      filters: {
-        pagination_info: {
-          page: 1,
-          limit: 10,
-        },
-      },
-    }),
 }));

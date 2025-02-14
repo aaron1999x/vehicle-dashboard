@@ -8,8 +8,8 @@ interface PaginationProps {
 }
 
 export function Pagination({ paginationInfo }: PaginationProps) {
-  const { filters, setPagination } = useFilterStore();
-  const { page, limit } = filters.pagination_info || { page: 1, limit: 10 };
+  const { pagination, setPagination } = useFilterStore();
+  const { page, limit } = pagination;
   const { total_records } = paginationInfo;
 
   const totalPages = Math.ceil(total_records / limit);
