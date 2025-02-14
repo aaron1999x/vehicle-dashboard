@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { VehicleRequest } from '../types';
 
-const BASE_URL = 'http://ia.tnx1.xyz/api/v1/ia/vehicle';
+const BASE_URL = 'https://ia.tnx1.xyz/api/v1/ia/vehicle';
 
 const headers = {
   'Content-Type': 'text/plain', //application.json causes CORS
