@@ -2,13 +2,19 @@ import { useQuery } from '@tanstack/react-query';
 import { getVehiclesHighlight } from '../../utils/serviceCalls/vehicles';
 import CardStatSkeleton from '@/components/skeleton/card-stat-skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ban, ListTodo, PencilLine } from 'lucide-react';
+import { ArrowDownWideNarrow, Ban, ListTodo, PencilLine } from 'lucide-react';
 import { ErrorDisplay } from '@/components/error-display';
+import { Button } from '@/components/ui/button';
+import type { ApprovalStatus } from '../../utils/types';
+import { useFilterStore } from '@/lib/store/filterStore';
+
 function VehicleStatContainer() {
   const { data, isError, isLoading } = useQuery({
     queryKey: ['vehicles'],
     queryFn: getVehiclesHighlight,
   });
+
+  const setFilter = useFilterStore((state) => state.setFilter);
 
   if (isError) {
     return <ErrorDisplay />;
@@ -18,6 +24,10 @@ function VehicleStatContainer() {
     return <CardStatSkeleton />;
   }
 
+  const handleQuickFilter = (status: ApprovalStatus) => {
+    setFilter('approval_status', status);
+  };
+
   return (
     <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
       <Card>
@@ -26,9 +36,17 @@ function VehicleStatContainer() {
           <PencilLine className="text-neutral-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-gray-500">
+          <div className="text-4xl font-bold text-gray-500">
             {data.data?.total_draft}
           </div>
+          <Button
+            variant="link"
+            onClick={() => handleQuickFilter(0)}
+            className=" flex items-center mt-2 p-0 text-gray-400 hover:text-gray-950 transition-colors"
+          >
+            View
+            <ArrowDownWideNarrow />
+          </Button>
         </CardContent>
       </Card>
       <Card>
@@ -39,9 +57,17 @@ function VehicleStatContainer() {
           <ListTodo className=" text-neutral-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-blue-500">
+          <div className="text-4xl font-bold text-blue-500">
             {data.data?.total_pending}
           </div>
+          <Button
+            variant="link"
+            onClick={() => handleQuickFilter(2)}
+            className=" flex items-center mt-2 p-0 text-gray-400 hover:text-gray-950 transition-colors"
+          >
+            View
+            <ArrowDownWideNarrow />
+          </Button>
         </CardContent>
       </Card>
       <Card>
@@ -50,9 +76,17 @@ function VehicleStatContainer() {
           <Ban className=" text-neutral-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-red-500">
+          <div className="text-4xl font-bold text-red-500">
             {data.data?.total_rejected}
           </div>
+          <Button
+            variant="link"
+            onClick={() => handleQuickFilter(3)}
+            className=" flex items-center mt-2 p-0 text-gray-400 hover:text-gray-950 transition-colors"
+          >
+            View
+            <ArrowDownWideNarrow />
+          </Button>
         </CardContent>
       </Card>
     </div>

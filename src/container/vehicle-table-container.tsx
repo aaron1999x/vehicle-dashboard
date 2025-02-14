@@ -3,59 +3,25 @@ import { DataTable } from '@/components/table/data-table';
 import { useQuery } from '@tanstack/react-query';
 import { getVehiclesWithFilters } from '../../utils/serviceCalls/vehicles';
 import { TableSkeleton } from '@/components/skeleton/table-skeleton';
-import { useState } from 'react';
-import type { VehicleRequest } from '../../utils/types';
 import { FilterModal } from '@/components/filter-modal';
 import { Input } from '@/components/ui/input';
 import { DateRangePicker } from '@/components/data-range-picker';
-import { DateRange } from 'react-day-picker';
 import { ErrorDisplay } from '@/components/error-display';
 
+import type React from 'react';
+import { useFilterStore } from '@/lib/store/filterStore';
+
 function VehicleTableContainer() {
-  const [filters, setFilters] = useState<Partial<VehicleRequest>>({
-    vehicle_type: undefined,
-    approval_status: undefined,
-    vehicle_status: undefined,
-    passenger_capacity_min: undefined,
-    passenger_capacity_max: undefined,
-    license_plate: undefined,
-    mtime_from: undefined,
-    mtime_to: undefined,
-  });
+  const { filters, setFilter } = useFilterStore();
 
   const { data, isError, isLoading } = useQuery({
     queryKey: ['vehicles', filters],
     queryFn: () => getVehiclesWithFilters(filters),
   });
 
-  console.log(data);
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
-    setFilters((prevFilters) => {
-      if (!value) {
-        const { license_plate, ...restFilters } = prevFilters;
-        return restFilters;
-      }
-
-      return {
-        ...prevFilters,
-        license_plate: value,
-      };
-    });
-  };
-
-  const handleDateChange = (dateRange: DateRange | undefined) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      mtime_from: dateRange?.from
-        ? Math.floor(new Date(dateRange.from).setHours(0, 0, 0, 0) / 1000) //convert to Unix, Start of the day
-        : undefined,
-      mtime_to: dateRange?.to
-        ? Math.floor(new Date(dateRange.to).setHours(23, 59, 59, 999) / 1000) //convert to Unix, End of the day
-        : undefined,
-    }));
+    setFilter('license_plate', value || undefined);
   };
 
   return (
@@ -69,14 +35,13 @@ function VehicleTableContainer() {
             value={filters.license_plate || ''}
             onChange={handleSearchChange}
           />
-          <DateRangePicker onDateChange={handleDateChange} />
+          <DateRangePicker />
         </div>
-        <FilterModal filters={filters} onFilterChange={setFilters} />
+        <FilterModal />
       </div>
 
-      {/* error state */}
       {isError && <ErrorDisplay />}
-      {isLoading ? ( //loading state
+      {isLoading ? (
         <TableSkeleton />
       ) : (
         <DataTable columns={columns} data={data?.data?.result || []} />

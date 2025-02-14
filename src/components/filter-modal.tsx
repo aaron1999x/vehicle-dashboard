@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -17,15 +17,10 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import type {
-  ApprovalStatus,
-  VehicleStatus,
-  VehicleType,
-  VehicleRequest,
-} from 'utils/types';
+import type { ApprovalStatus, VehicleStatus, VehicleType } from 'utils/types';
 import { Filter, XCircleIcon } from 'lucide-react';
+import { useFilterStore } from '@/lib/store/filterStore';
 
-// Create mappings for display values
 const approvalStatusMap = {
   0: 'Draft',
   1: 'Approved',
@@ -39,12 +34,10 @@ const vehicleStatusMap = {
   2: 'Decommissioned',
 } as const;
 
-interface FilterModalProps {
-  filters: Partial<VehicleRequest>;
-  onFilterChange: (filters: Partial<VehicleRequest>) => void;
-}
+export function FilterModal() {
+  const { filters, setFilter, resetFilters } = useFilterStore();
+  const [isOpen, setIsOpen] = useState(false);
 
-export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
   const [vehicleType, setVehicleType] = useState<VehicleType | ''>(
     (filters.vehicle_type as VehicleType) ?? ''
   );
@@ -60,13 +53,18 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
   const [maxCapacity, setMaxCapacity] = useState<number | ''>(
     filters.passenger_capacity_max ?? ''
   );
-  const [isOpen, setIsOpen] = useState(false);
-  const isFilterActive =
-    vehicleType ||
-    approvalStatus !== '' ||
-    vehicleStatus !== '' ||
-    minCapacity !== '' ||
-    maxCapacity !== '';
+
+  useEffect(() => {
+    setVehicleType((filters.vehicle_type as VehicleType) ?? '');
+    setApprovalStatus(filters.approval_status ?? '');
+    setVehicleStatus(filters.vehicle_status ?? '');
+    setMinCapacity(filters.passenger_capacity_min ?? '');
+    setMaxCapacity(filters.passenger_capacity_max ?? '');
+  }, [filters]);
+
+  const isFilterActive = Object.values(filters).some(
+    (value) => value !== undefined
+  );
 
   const clearFilters = () => {
     setVehicleType('');
@@ -74,27 +72,21 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
     setVehicleStatus('');
     setMinCapacity('');
     setMaxCapacity('');
-    onFilterChange({});
+    resetFilters();
     setIsOpen(false);
   };
 
   const submitFilters = () => {
-    const newFilters: Partial<VehicleRequest> = {
-      vehicle_type: vehicleType !== '' ? vehicleType : undefined,
-      approval_status: approvalStatus !== '' ? approvalStatus : undefined,
-      vehicle_status: vehicleStatus !== '' ? vehicleStatus : undefined,
-      passenger_capacity_min:
-        minCapacity !== '' ? Number(minCapacity) : undefined,
-      passenger_capacity_max:
-        maxCapacity !== '' ? Number(maxCapacity) : undefined,
-    };
-
-    onFilterChange(newFilters);
+    setFilter('vehicle_type', vehicleType || undefined);
+    setFilter('approval_status', approvalStatus !== '' ? approvalStatus : null); //cannot use "|| undefined" here as if its 0(falsey) , it automatically becomes undefined and filter wont work
+    setFilter('vehicle_status', vehicleStatus !== '' ? vehicleStatus : null);
+    setFilter('passenger_capacity_min', minCapacity || undefined);
+    setFilter('passenger_capacity_max', maxCapacity || undefined);
     setIsOpen(false);
   };
 
   return (
-    <div>
+    <div className="flex items-center gap-2">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" className="font-normal">
@@ -138,7 +130,7 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
               <Select
                 value={approvalStatus?.toString() || ''}
                 onValueChange={(value) =>
-                  setApprovalStatus(Number.parseInt(value) as ApprovalStatus)
+                  setApprovalStatus(Number(value) as ApprovalStatus)
                 }
               >
                 <SelectTrigger>
@@ -166,9 +158,9 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
               </label>
               <Select
                 value={vehicleStatus?.toString() || ''}
-                onValueChange={(value) =>
-                  setVehicleStatus(Number.parseInt(value) as VehicleStatus)
-                }
+                onValueChange={(value) => {
+                  setVehicleStatus(Number(value) as VehicleStatus);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select vehicle status">
@@ -200,9 +192,7 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
                   placeholder="Min"
                   value={minCapacity}
                   onChange={(e) =>
-                    setMinCapacity(
-                      e.target.value ? Number.parseInt(e.target.value) : ''
-                    )
+                    setMinCapacity(e.target.value ? Number(e.target.value) : '')
                   }
                 />
                 <Input
@@ -211,9 +201,7 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
                   placeholder="Max"
                   value={maxCapacity}
                   onChange={(e) =>
-                    setMaxCapacity(
-                      e.target.value ? Number.parseInt(e.target.value) : ''
-                    )
+                    setMaxCapacity(e.target.value ? Number(e.target.value) : '')
                   }
                 />
               </div>
@@ -231,11 +219,11 @@ export function FilterModal({ filters, onFilterChange }: FilterModalProps) {
       {isFilterActive && (
         <Button
           variant="ghost"
-          size="icon"
           onClick={clearFilters}
-          className="group ml-2"
+          className="group flex items-center gap-2"
         >
           <XCircleIcon className="w-5 h-5 text-gray-500 group-hover:text-red-500" />
+          <span className="group-hover:text-red-500">Clear all</span>
         </Button>
       )}
     </div>
