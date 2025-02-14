@@ -1,4 +1,4 @@
-# Project Setup Guide
+# Vehicle Management Dashboard
 
 ## Prerequisites
 
@@ -40,5 +40,12 @@ Ensure you have the following installed before proceeding:
 - Tailwind CSS (for styling)
 - shadcn/ui (for UI components)
 - Lucide React (for icons)
-- TanStack Query (for data fetching and state management)
+- TanStack Query (for asynchronous state management)
 - pnpm (for package management)
+- Zustand (for state management)
+
+## Main Features Implemented
+
+- Highlight Cards with Quick Filters
+- Search and Filter Panel
+- Table with Server-Side Filtering, Pagination, and Sorting
