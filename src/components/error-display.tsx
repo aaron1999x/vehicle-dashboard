@@ -6,7 +6,7 @@ interface ErrorStateProps {
 
 export function ErrorDisplay({
   message = 'Something went wrong. Please try again.',
-}: ErrorStateProps) {
+}: Readonly<ErrorStateProps>) {
   return (
     <div className="flex flex-col items-center justify-center py-10 text-center">
       <AlertTriangle className="w-12 h-12 text-red-500" />
