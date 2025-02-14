@@ -39,18 +39,18 @@ function VehicleTableContainer() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <Input
             type="text"
             placeholder="Search by License Plate"
-            className="max-w-lg"
+            className="w-full sm:w-[300px]"
             value={filters.license_plate || ''}
             onChange={handleSearchChange}
           />
           <DateRangePicker />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <SortDropdown />
           <FilterModal />
         </div>

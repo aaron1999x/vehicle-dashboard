@@ -90,7 +90,7 @@ export function SortDropdown() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-[250px] justify-between font-normal"
+          className="md:w-[250px] w-full justify-between font-normal"
         >
           {getSortLabel()}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

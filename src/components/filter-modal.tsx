@@ -109,7 +109,7 @@ export function FilterModal() {
     <div className="flex items-center gap-2">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="font-normal">
+          <Button variant="outline" className="font-normal w-full md:w-auto">
             <Filter /> Filters
           </Button>
         </DialogTrigger>
