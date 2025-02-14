@@ -9,8 +9,8 @@ export type Pagination = {
 };
 
 export type SortBy = {
-  field: 'mtime' | 'license_plate'; // Restricting to allowed fields
-  order_type: 0 | 1; // 0 = Ascending, 1 = Descending
+  field: 'mtime' | 'license_plate';
+  order_type?: 0 | 1; // 0 = Ascending, 1 = Descending
 };
 
 export type Trip = {

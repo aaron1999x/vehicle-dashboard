@@ -12,14 +12,19 @@ import type React from 'react';
 import { useFilterStore } from '@/lib/store/filterStore';
 import { Pagination } from '@/components/pagination';
 import { useEffect } from 'react';
+import { SortDropdown } from '@/components/sort-dropdown';
 
 function VehicleTableContainer() {
-  const { filters, pagination, setFilter } = useFilterStore();
+  const { filters, pagination, sorting, setFilter } = useFilterStore();
 
   const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: ['vehicles', filters, pagination],
+    queryKey: ['vehicles', filters, pagination, sorting],
     queryFn: () =>
-      getVehiclesWithFilters({ ...filters, pagination_info: pagination }), //seperate pagination out of filters
+      getVehiclesWithFilters({
+        ...filters,
+        pagination_info: pagination,
+        sort_by: sorting,
+      }), //seperate pagination out of filters
   });
 
   useEffect(() => {
@@ -45,7 +50,10 @@ function VehicleTableContainer() {
           />
           <DateRangePicker />
         </div>
-        <FilterModal />
+        <div className="flex items-center gap-2">
+          <SortDropdown />
+          <FilterModal />
+        </div>
       </div>
 
       {isError && <ErrorDisplay />}

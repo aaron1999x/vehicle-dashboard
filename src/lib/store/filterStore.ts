@@ -1,14 +1,13 @@
-import { VehicleRequest } from 'utils/types';
+import { Pagination, SortBy, VehicleRequest } from 'utils/types';
 import { create } from 'zustand';
 
 interface FilterState {
   filters: Partial<VehicleRequest>;
-  pagination: {
-    page: number;
-    limit: number;
-  };
+  pagination: Pagination;
+  sorting: SortBy[];
   setFilter: (key: keyof VehicleRequest, value: any) => void;
   setPagination: (page: number, limit: number) => void;
+  setSorting: (sorting: SortBy[]) => void;
   resetFilters: () => void;
 }
 
@@ -19,6 +18,12 @@ export const useFilterStore = create<FilterState>((set) => ({
     page: 1,
     limit: 10,
   },
+  sorting: [],
+  setSorting: (sorting) =>
+    set(() => ({
+      sorting,
+      // pagination: { page: 1, limit: 10 }, // nt sure if i need this
+    })),
   setFilter: (key, value) =>
     set((state) => ({
       filters: { ...state.filters, [key]: value },
