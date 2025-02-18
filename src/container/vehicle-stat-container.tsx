@@ -26,6 +26,10 @@ function VehicleStatContainer() {
 
   const handleQuickFilter = (status: ApprovalStatus) => {
     setFilter('approval_status', status);
+    if (status === 2 || status === 3) {
+      //if rejected or pending , send vehiclestatus active
+      setFilter('vehicle_status', 0);
+    }
   };
 
   return (

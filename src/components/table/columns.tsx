@@ -26,6 +26,10 @@ export const columns: ColumnDef<VehicleResponse>[] = [
     header: 'Type',
   },
   {
+    accessorKey: 'vehicle_status',
+    header: 'Vehicle Status',
+  },
+  {
     accessorKey: 'approval_status',
     header: 'Approval Status',
     cell: ({ row }) => {
